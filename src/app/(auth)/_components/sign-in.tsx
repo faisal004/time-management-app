@@ -1,15 +1,9 @@
-import { signIn } from "@/auth"
+import { loginAction } from "@/actions/login-action";
 
 export function SignIn() {
   return (
     <form
-      action={async (formData) => {
-        "use server"
-        await signIn("credentials", {
-          formData,
-          redirectTo: "/dashboard"
-        })
-      }}
+      action={loginAction}
     >
       <label>
         Email
