@@ -1,4 +1,6 @@
 import { loginAction } from "@/actions/login-action";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function SignIn() {
   return (
@@ -7,13 +9,13 @@ export function SignIn() {
     >
       <label>
         Email
-        <input name="email" type="email" />
+        <Input name="email" type="email" />
       </label>
       <label>
         Password
-        <input name="password" type="password" />
+        <Input name="password" type="password" />
       </label>
-      <button>Sign In</button>
+      <Button type="submit" className="w-full">Sign In</Button>
     </form>
   )
 }

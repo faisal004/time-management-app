@@ -6,7 +6,7 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <div>
+    <div className=" h-screen flex items-center justify-center">
       {session ? (
         <div>Signed in as {session.user?.email}
 
