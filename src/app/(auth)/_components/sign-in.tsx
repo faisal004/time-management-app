@@ -1,11 +1,14 @@
 import { signIn } from "@/auth"
- 
+
 export function SignIn() {
   return (
     <form
       action={async (formData) => {
         "use server"
-        await signIn("credentials", formData)
+        await signIn("credentials", {
+          formData,
+          redirectTo: "/dashboard"
+        })
       }}
     >
       <label>
