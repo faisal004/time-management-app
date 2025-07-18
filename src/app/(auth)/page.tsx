@@ -1,14 +1,23 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { auth } from "@/auth";
+import { SignOutButton } from "./_components/sign-out";
+import { SignIn } from "./_components/sign-in";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
+    <div>
+      {session ? (
+        <div>Signed in as {session.user?.email}
 
-    <div className="flex flex-col container mx-auto items-center justify-center h-screen">
-      <h1>Home</h1>
-      <Input type="text" placeholder="Email" />
-      <Input type="password" placeholder="Password" />
-      <Button variant="default" size="lg" className="w-full">Sign Up</Button>
+          <SignOutButton />
+        </div>
+      ) : (
+        <div>
+          <SignIn />
+
+        </div>
+      )}
     </div>
   );
 }
