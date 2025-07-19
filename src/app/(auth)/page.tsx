@@ -8,7 +8,7 @@ export default async function Home() {
         <SignIn />
 
       </div>
-      <div className=" md:flex hidden flex-col items-center justify-center bg-[#1C64F2] text-white gap-5 h-full  ">
+      <div className=" md:flex hidden flex-col items-center justify-center bg-[var(--brand-blue)] text-white gap-5 h-full  ">
         <div className=" flex flex-col items-center justify-center  max-w-[600px] mx-[72px] space-y-[12px] ">
           <h1 className="w-full text-left text-[40px] "> ticktock</h1>
 

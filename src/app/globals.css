@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --brand-blue: #1C64F2;
+
 }
 
 @theme inline {
