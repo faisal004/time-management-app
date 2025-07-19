@@ -1,4 +1,4 @@
-import { SignIn } from "./_components/sign-in";
+import { SignIn } from "@/components/auth/sign-in-form";
 
 export default async function Home() {
 
