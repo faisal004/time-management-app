@@ -7,15 +7,16 @@ import {
 } from "@/components/ui/dropdown"
 import { ChevronDownIcon } from "lucide-react";
 import { SignOutButton } from "../auth/sign-out";
+import Link from "next/link";
 const Navbar = async () => {
 
     const session = await auth()
     return (
         <nav className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center ">
+            <Link href={"/"} className="flex items-center cursor-pointer ">
                 <span className="font-bold text-[24px] ">ticktock</span>
 
-            </div>
+            </Link>
             <div className=" text-[14px] w-full text-left px-5 ">Timesheets</div>
             <DropdownMenu >
                 <DropdownMenuTrigger>
