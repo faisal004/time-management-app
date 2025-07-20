@@ -1,23 +1,21 @@
 import { notFound } from 'next/navigation';
-import { StatusBadge } from '@/utils/badge-color';
-import Link from 'next/link';
 import { fetchTimesheets } from '@/routes/dashboard';
 
 interface WeekDetailsProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function WeekDetails({ params }: WeekDetailsProps) {
   const { data: timesheets } = await fetchTimesheets();
-  const weekNumber = parseInt(params.id);
+  const weekNumber =  parseInt((await params).id);
   const timesheet = timesheets?.find((ts: any) => ts.week === weekNumber);
 
   if (!timesheet) {
     notFound();
   }
-
+console.log(timesheet.days)
   return (
     <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-6">
@@ -29,6 +27,7 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
         <div className="mb-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">{timesheet.date}</h3>
+
           </div>
         </div>
 
@@ -36,7 +35,10 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
           {timesheet.days.map((day: any) => (
             <div key={day.date} className="border rounded-lg p-4">
               <h4 className="font-medium text-gray-900 mb-3">
-                {new Date(day.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                {new Date(day.date).toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  day: 'numeric' 
+                })}
               </h4>
               
               {day.timeEntries.length > 0 ? (
