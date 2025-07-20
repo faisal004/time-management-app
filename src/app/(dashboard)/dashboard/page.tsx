@@ -65,9 +65,7 @@ export default async function Dashboard() {
           </tbody>
         </table>
       </div>
-      <footer className="text-center text-xs text-gray-400 mt-8">
-        2024 tentwenty. All rights reserved.
-      </footer>
+
     </div>
   );
 }

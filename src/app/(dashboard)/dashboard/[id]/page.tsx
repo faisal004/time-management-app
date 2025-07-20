@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { fetchTimesheets } from '@/routes/dashboard';
 import { Progress } from '@/components/ui/progress';
+import { Ellipsis, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface WeekDetailsProps {
     params: Promise<{
@@ -17,76 +19,66 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
     if (!timesheet) {
         notFound();
     }
-    console.log(totalWeekHours)
     return (
-        <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-6">
+        <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow md:p-6 p-4">
+            <div className="flex md:flex-row flex-col justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold w-full">This week's timeheets</h2>
-                <div className="text-center flex items-center flex-col  w-1/4">
-                  
-                    <Progress value={totalWeekHours} max={40}  showPercentage/>
-                   
+                <div className="text-center flex items-center flex-col  md:w-1/3 w-full">
+
+                    <Progress value={totalWeekHours} max={40} showPercentage />
+
                 </div>
             </div>
 
             <div className="">
                 <div className="mb-6">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-light">{timesheet.date}</h3>
-                        <span className="text-gray-500 text-sm">{totalWeekHours} hours</span>
+                        <h3 className="text-sm font-light">{timesheet.date}</h3>
                     </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 ">
                     {timesheet.days.map((day: any) => (
-                        <div key={day.date} className=" rounded-lg p-4">
-                            <h4 className="font-medium text-gray-900 mb-3">
+                        <div key={day.date} className=" rounded-lg p-4 flex  md:flex-row flex-col justify-between items-start h-full gap-2 md:gap-7  ">
+                            <div className="font-medium text-gray-900 md:mb-3 flex items-start justify-start  h-full md:w-[10%]">
                                 {new Date(day.date).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
                                 })}
-                            </h4>
+                            </div>
+                            <div className="w-full flex flex-col gap-2">
+                                {day.timeEntries.length > 0 && (
+                                    <div className="space-y-3">
+                                        {day.timeEntries.map((entry: any) => (
+                                            <div key={entry.id} className="flex justify-between items-center px-3 py-2 rounded border-[1px] border-[#E5E7EB]">
+                                                <div className='w-full'>
+                                                    <p className="text-lg font-semibold text-gray-600">{entry.taskDescription}</p>
 
-                            {day.timeEntries.length > 0 ? (
-                                <div className="space-y-3">
-                                    {day.timeEntries.map((entry: any) => (
-                                        <div key={entry.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                                            <div>
-                                                <p className="font-medium">{entry.project}</p>
-                                                <p className="text-sm text-gray-600">{entry.taskDescription}</p>
-                                                <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">
-                                                    {entry.workType}
-                                                </span>
+                                                </div>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className="font-light text-sm">{entry.hours}h</span>
+                                                    <div className="inline-block  px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded w-fit whitespace-nowrap">
+                                                        {entry.project}
+                                                    </div>
+                                                    <div>
+                                                        <Ellipsis className='text-gray-500 size-4' />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span className="font-medium">{entry.hours}h</span>
-                                        </div>
-                                    ))}
-                                    <div className="text-right mt-2 text-sm text-gray-500">
-                                        Total: {day.totalHours} hours
+                                        ))}
+
                                     </div>
-                                </div>
-                            ) : (
-                                <p className="text-gray-500 text-sm">No time entries for this day.</p>
-                            )}
+                                )}
+
+                                <Button className='bg-[#E1EFFE] border-2 flex items-center border-[#1A56DB] text-[#1A56DB] border-dotted hover:bg-[#1A56DB]/20 '>
+                                    <Plus className="size-4" /> <span>Add new task</span>
+                                </Button>
+                            </div>
+
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-6 pt-4 border-t flex justify-between items-center">
-                    <div className="text-sm text-gray-500">
-                        Week {timesheet.week} • {timesheet.days.length} days • {timesheet.days.reduce((sum: number, day: any) => sum + day.totalHours, 0)} total hours
-                    </div>
-                    {timesheet.action === 'Update' && (
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                            Update Timesheet
-                        </button>
-                    )}
-                    {timesheet.action === 'Create' && (
-                        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                            Create Timesheet
-                        </button>
-                    )}
-                </div>
             </div>
         </div>
     );

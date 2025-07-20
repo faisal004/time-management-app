@@ -9,7 +9,6 @@ const generateTimeEntries = (count: number): TimeEntry[] => {
     'Code refactoring',
     'Unit testing',
     'Documentation update',
-    'Team meeting',
     'Bug fixes',
     'Performance optimization'
   ];
