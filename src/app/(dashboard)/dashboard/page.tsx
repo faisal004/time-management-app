@@ -49,12 +49,12 @@ export default async function Dashboard() {
                     </Link>
                   )}
                   {row.action === 'Update' && (
-                    <Link href={`/dashboard/${row.week}`} className="text-yellow-700 hover:underline">
+                    <Link href={`/dashboard/${row.week}`} className="text-blue-600 hover:underline">
                       Update
                     </Link>
                   )}
                   {row.action === 'Create' && (
-                    <Link href={`/dashboard/${row.week}`} className="text-pink-600 hover:underline">
+                    <Link href={`/dashboard/${row.week}`} className="text-blue-600 hover:underline">
                       Create
                     </Link>
                   )}
