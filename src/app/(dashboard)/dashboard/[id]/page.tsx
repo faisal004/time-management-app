@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { fetchTimesheets } from '@/routes/dashboard';
 import { Progress } from '@/components/ui/progress';
 import { Ellipsis, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import AddTaskModal from '@/components/dashboard/add-task-modal';
 
 interface WeekDetailsProps {
     params: Promise<{
@@ -70,11 +70,9 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
                                     </div>
                                 )}
 
-                                <Button className='bg-[#E1EFFE] border-2 flex items-center border-[#1A56DB] text-[#1A56DB] border-dotted hover:bg-[#1A56DB]/20 '>
-                                    <Plus className="size-4" /> <span>Add new task</span>
-                                </Button>
-                            </div>
+                                <AddTaskModal />
 
+                            </div>
                         </div>
                     ))}
                 </div>
