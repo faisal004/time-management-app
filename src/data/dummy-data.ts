@@ -18,7 +18,7 @@ const generateTimeEntries = (count: number): TimeEntry[] => {
     project: projects[Math.floor(Math.random() * projects.length)],
     workType: workTypes[Math.floor(Math.random() * workTypes.length)],
     taskDescription: tasks[Math.floor(Math.random() * tasks.length)],
-    hours: Math.floor(Math.random() * 4) + 1
+    hours: Math.max(1, Math.floor(Math.random() * 4) + 1) 
   }));
 };
 
