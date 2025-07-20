@@ -1,17 +1,8 @@
-import { fetchTimesheets } from './fetch-timesheets';
+import { fetchTimesheets } from '@/routes/dashboard';
+import { StatusBadge } from '@/utils/badge-color';
 import Link from 'next/link';
 
-function StatusBadge({ status }: { status: string }) {
-  const color =
-    status === 'COMPLETED'
-      ? 'bg-green-100 text-green-700'
-      : status === 'INCOMPLETE'
-      ? 'bg-yellow-100 text-yellow-800'
-      : 'bg-pink-100 text-pink-700';
-  return (
-    <span className={`px-3 py-1 rounded text-xs font-semibold ${color}`}>{status}</span>
-  );
-}
+
 
 export default async function Dashboard() {
   const { data: timesheets, error } = await fetchTimesheets();
