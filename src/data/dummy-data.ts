@@ -19,7 +19,7 @@ const generateTimeEntries = (count: number): TimeEntry[] => {
     project: projects[Math.floor(Math.random() * projects.length)],
     workType: workTypes[Math.floor(Math.random() * workTypes.length)],
     taskDescription: tasks[Math.floor(Math.random() * tasks.length)],
-    hours: Math.floor(Math.random() * 4) + 1 // 1-4 hours per entry
+    hours: Math.floor(Math.random() * 4) + 1 
   }));
 };
 
@@ -74,8 +74,17 @@ const generateWeek = (weekNumber: number, targetHours: number) => {
   const endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + 4);
   
-  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' });
-  const formattedDate = `${dateFormatter.format(startDate)} - ${dateFormatter.format(endDate)}, ${startDate.getFullYear()}`;
+  const formatDate = (date: Date) => {
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+    return { day, month, year };
+  };
+  
+  const start = formatDate(startDate);
+  const end = formatDate(endDate);
+  
+  const formattedDate = `${start.day} - ${end.day} ${end.month}, ${end.year}`;
   
   return {
     week: weekNumber,

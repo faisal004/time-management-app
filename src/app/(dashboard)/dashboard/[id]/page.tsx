@@ -19,22 +19,16 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto mt-8">
+    <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Week {timesheet.week} Details</h2>
-        <Link 
-          href="/dashboard" 
-          className="text-sm text-blue-600 hover:underline"
-        >
-          ← Back to Dashboard
-        </Link>
+        <h2 className="text-2xl font-bold">This week's timeheets</h2>
+      
       </div>
       
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="">
         <div className="mb-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">{timesheet.date}</h3>
-            <StatusBadge status={timesheet.status} />
           </div>
         </div>
 
