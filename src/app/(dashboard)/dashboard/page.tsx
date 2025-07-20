@@ -1,4 +1,3 @@
-import { SignOutButton } from "@/components/auth/sign-out";
 import { fetchTimesheets } from './fetch-timesheets';
 import Link from 'next/link';
 
@@ -15,7 +14,26 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default async function Dashboard() {
-  const timesheets = await fetchTimesheets();
+  const { data: timesheets, error } = await fetchTimesheets();
+
+  if (error !== null) {
+    return (
+      <div className="max-w-5xl mx-auto mt-8">
+        <h2 className="text-xl font-bold mb-4">Your Timesheets</h2>
+        <div className="bg-red-100 text-red-700 p-4 rounded">Error: {error}</div>
+      </div>
+    );
+  }
+
+  if (!timesheets) {
+    return (
+      <div className="max-w-5xl mx-auto mt-8">
+        <h2 className="text-xl font-bold mb-4">Your Timesheets</h2>
+        <div className="bg-gray-100 text-gray-700 p-4 rounded">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto mt-8">
       <h2 className="text-xl font-bold mb-4">Your Timesheets</h2>
