@@ -6,7 +6,6 @@ import Link from 'next/link';
 
 export default async function Dashboard() {
   const { data: timesheets, error } = await fetchTimesheets();
-
   if (error !== null) {
     return (
       <div className="max-w-5xl mx-auto mt-8">
