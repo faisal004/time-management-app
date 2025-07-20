@@ -2,10 +2,9 @@ import { fetchTimesheets } from '@/routes/dashboard';
 import { StatusBadge } from '@/utils/badge-color';
 import Link from 'next/link';
 
-
-
 export default async function Dashboard() {
   const { data: timesheets, error } = await fetchTimesheets();
+
   if (error !== null) {
     return (
       <div className="max-w-5xl mx-auto mt-8">
@@ -25,22 +24,22 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-4">
+    <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-[24px]">
       <h2 className="text-xl font-bold mb-4">Your Timesheets</h2>
-      <div className="bg-[#F9FAFB] rounded-lg shadow ">
-        <table className="w-full text-sm ">
+      <div className="bg-[#F9FAFB] rounded-lg shadow overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead className='p-4'>
             <tr className="text-gray-500 text-xs border-b border-gray-200 h-[50px]">
-              <th className="py-2 px-3 text-left ">WEEK #</th>
-              <th className="py-2 px-3 text-left">DATE</th>
-              <th className="py-2 px-3 text-left">STATUS</th>
-              <th className="py-2 px-3 text-left">ACTIONS</th>
+              <th className="py-2 px-3 text-left min-w-[80px]">WEEK #</th>
+              <th className="py-2 px-3 text-left min-w-[120px]">DATE</th>
+              <th className="py-2 px-3 text-left min-w-[100px]">STATUS</th>
+              <th className="py-2 px-3 text-left min-w-[100px]">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
             {timesheets.map((row: any) => (
-              <tr key={row.week} className="border-b last:border-0  border-gray-200 h-[54px]">
-                <td className="py-2 px-3 ">{row.week}</td>
+              <tr key={row.week} className="border-b last:border-0 border-gray-200 h-[54px]">
+                <td className="py-2 px-3">{row.week}</td>
                 <td className="py-2 px-3 bg-white">{row.date}</td>
                 <td className="py-2 px-3 bg-white"><StatusBadge status={row.status} /></td>
                 <td className="py-2 px-3 bg-white">
@@ -65,7 +64,6 @@ export default async function Dashboard() {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }
