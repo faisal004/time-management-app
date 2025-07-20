@@ -19,18 +19,31 @@ const generateTimeEntries = (count: number): TimeEntry[] => {
     project: projects[Math.floor(Math.random() * projects.length)],
     workType: workTypes[Math.floor(Math.random() * workTypes.length)],
     taskDescription: tasks[Math.floor(Math.random() * tasks.length)],
-    hours: Math.floor(Math.random() * 4) + 1 
+    hours: Math.floor(Math.random() * 4) + 1 // 1-4 hours per entry
   }));
 };
 
-const generateDays = (weekNumber: number): DayTimesheet[] => {
+const generateDays = (weekNumber: number, targetHours: number): DayTimesheet[] => {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   const baseDate = new Date(2024, 0, weekNumber * 7);
+  
+  const hoursPerDay = Math.floor(targetHours / 5);
+  const remainder = targetHours % 5;
   
   return days.map((day, index) => {
     const date = new Date(baseDate);
     date.setDate(baseDate.getDate() + index);
-    const timeEntries = generateTimeEntries(Math.floor(Math.random() * 3) + 1);
+    
+    const dayHours = index < remainder ? hoursPerDay + 1 : hoursPerDay;
+    const timeEntries = dayHours > 0 ? generateTimeEntries(Math.min(3, Math.max(1, Math.ceil(dayHours / 2)))) : [];
+    
+    if (index === days.length - 1) {
+      const currentTotal = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
+      if (timeEntries.length > 0 && currentTotal !== dayHours) {
+        timeEntries[timeEntries.length - 1].hours += dayHours - currentTotal;
+      }
+    }
+    
     const totalHours = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
     
     return {
@@ -42,33 +55,45 @@ const generateDays = (weekNumber: number): DayTimesheet[] => {
   });
 };
 
-export const timesheets: Timesheet[] = [
-  {
-    week: 1,
-    date: '1 - 5 January, 2024',
-    status: 'COMPLETED',
-    action: 'View',
-    days: generateDays(1)
-  },
-  {
-    week: 2,
-    date: '8 - 12 January, 2024',
-    status: 'COMPLETED',
-    action: 'View',
-    days: generateDays(2)
-  },
-  {
-    week: 3,
-    date: '15 - 19 January, 2024',
-    status: 'INCOMPLETE',
-    action: 'Update',
-    days: generateDays(3)
-  },
-  {
-    week: 4,
-    date: '22 - 26 January, 2024',
-    status: 'MISSING',
-    action: 'Create',
-    days: []
+const getWeekStatusAndAction = (days: DayTimesheet[]) => {
+  const totalHours = days.reduce((sum, day) => sum + day.totalHours, 0);
+  
+  if (totalHours === 0) {
+    return { status: 'MISSING' as TimesheetStatus, action: 'Create' as const };
+  } else if (totalHours >= 40) {
+    return { status: 'COMPLETED' as TimesheetStatus, action: 'View' as const };
+  } else {
+    return { status: 'INCOMPLETE' as TimesheetStatus, action: 'Update' as const };
   }
+};
+
+const generateWeek = (weekNumber: number, targetHours: number) => {
+  const days = generateDays(weekNumber, targetHours);
+  const { status, action } = getWeekStatusAndAction(days);
+  const startDate = new Date(2024, 0, (weekNumber - 1) * 7 + 1);
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 4);
+  
+  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric' });
+  const formattedDate = `${dateFormatter.format(startDate)} - ${dateFormatter.format(endDate)}, ${startDate.getFullYear()}`;
+  
+  return {
+    week: weekNumber,
+    date: formattedDate,
+    status,
+    action,
+    days
+  };
+};
+
+export const timesheets: Timesheet[] = [
+  generateWeek(1, 40),
+  
+  generateWeek(2, 40),
+  
+  generateWeek(3, 20),
+  
+  generateWeek(4, 0),
+  
+  generateWeek(5, 38)
 ];
