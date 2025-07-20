@@ -9,7 +9,7 @@ import { Ellipsis } from "lucide-react"
 const EditOrDelete = () => {
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger className="flex items-center">
                 <Ellipsis className='text-gray-500 size-4' />
 
             </DropdownMenuTrigger>
