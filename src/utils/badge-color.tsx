@@ -1,10 +1,10 @@
 export function StatusBadge({ status }: { status: string }) {
   const color =
     status === 'COMPLETED'
-      ? 'bg-green-100 text-green-700'
+      ? 'bg-[#DEF7EC] text-[#03543F]'
       : status === 'INCOMPLETE'
-      ? 'bg-yellow-100 text-yellow-800'
-      : 'bg-pink-100 text-pink-700';
+      ? 'bg-yellow-100 text-[#723B13]'
+      : 'bg-[#FCE8F3] text-[#99154B]';
   return (
     <span className={`px-3 py-1 rounded text-xs font-semibold ${color}`}>{status}</span>
   );

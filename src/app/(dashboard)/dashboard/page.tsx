@@ -25,13 +25,13 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto mt-8">
+    <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow p-4">
       <h2 className="text-xl font-bold mb-4">Your Timesheets</h2>
-      <div className="bg-white rounded-lg shadow p-4">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-gray-500 text-xs border-b">
-              <th className="py-2 px-3 text-left">WEEK #</th>
+      <div className="bg-[#F9FAFB] rounded-lg shadow ">
+        <table className="w-full text-sm ">
+          <thead className='p-4'>
+            <tr className="text-gray-500 text-xs border-b border-gray-200 h-[50px]">
+              <th className="py-2 px-3 text-left ">WEEK #</th>
               <th className="py-2 px-3 text-left">DATE</th>
               <th className="py-2 px-3 text-left">STATUS</th>
               <th className="py-2 px-3 text-left">ACTIONS</th>
@@ -39,11 +39,11 @@ export default async function Dashboard() {
           </thead>
           <tbody>
             {timesheets.map((row: any) => (
-              <tr key={row.week} className="border-b last:border-0">
-                <td className="py-2 px-3">{row.week}</td>
-                <td className="py-2 px-3">{row.date}</td>
-                <td className="py-2 px-3"><StatusBadge status={row.status} /></td>
-                <td className="py-2 px-3">
+              <tr key={row.week} className="border-b last:border-0  border-gray-200 h-[54px]">
+                <td className="py-2 px-3 ">{row.week}</td>
+                <td className="py-2 px-3 bg-white">{row.date}</td>
+                <td className="py-2 px-3 bg-white"><StatusBadge status={row.status} /></td>
+                <td className="py-2 px-3 bg-white">
                   {row.action === 'View' && (
                     <Link href={`/dashboard/${row.week}`} className="text-blue-600 hover:underline">
                       View
