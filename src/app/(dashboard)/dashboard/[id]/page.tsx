@@ -3,6 +3,7 @@ import { fetchTimesheets } from '@/routes/dashboard';
 import { Progress } from '@/components/ui/progress';
 import { Ellipsis, Plus } from 'lucide-react';
 import AddTaskModal from '@/components/dashboard/add-task-modal';
+import EditOrDelete from '@/components/dashboard/edit-or-delete';
 
 interface WeekDetailsProps {
     params: Promise<{
@@ -61,7 +62,7 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
                                                         {entry.project}
                                                     </div>
                                                     <div>
-                                                        <Ellipsis className='text-gray-500 size-4' />
+                                                        <EditOrDelete />
                                                     </div>
                                                 </div>
                                             </div>
