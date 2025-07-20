@@ -22,3 +22,17 @@ export async function fetchTimesheets() {
     return { data: null, error: err.message || 'Unknown error' };
   }
 }
+
+export async function fetchTimesheetsbyID() {
+  try {
+    const response = await fetch('/api/timesheets'); // or your actual API endpoint
+    if (!response.ok) {
+      throw new Error('Failed to fetch timesheets');
+    }
+    const data = await response.json();
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching timesheets:', error);
+    return { data: null, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}

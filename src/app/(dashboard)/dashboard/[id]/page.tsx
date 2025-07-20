@@ -1,25 +1,71 @@
-import { notFound } from 'next/navigation';
-import { fetchTimesheets } from '@/routes/dashboard';
+"use client"
+import {  fetchTimesheetsbyID } from '@/routes/dashboard';
 import { Progress } from '@/components/ui/progress';
-import { Ellipsis, Plus } from 'lucide-react';
+import {  Loader, } from 'lucide-react';
 import AddTaskModal from '@/components/dashboard/add-task-modal';
 import EditOrDelete from '@/components/dashboard/edit-or-delete';
+import { useEffect, useState } from 'react';
+import { Timesheet } from '@/types/timesheets';
+import { useParams } from 'next/navigation';
 
-interface WeekDetailsProps {
-    params: Promise<{
-        id: string;
-    }>;
-}
+export default function WeekDetails() {
+    const params = useParams()
 
-export default async function WeekDetails({ params }: WeekDetailsProps) {
-    const { data: timesheets } = await fetchTimesheets();
-    const weekNumber = parseInt((await params).id);
-    const timesheet = timesheets?.find((ts: any) => ts.week === weekNumber);
-    const totalWeekHours = timesheet.days.reduce((sum: number, day: any) => sum + day.totalHours, 0);
+    const [timesheet, setTimesheet] = useState<Timesheet | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const totalWeekHours = timesheet?.days.reduce((sum: number, day: any) => sum + day.totalHours, 0) || 0;
+    const handleDeleteEntry = (day: string, entryId: string) => {
+        setTimesheet(prev => {
+          if (!prev) return prev
+          
+          const updatedDays = prev.days.map(d => {
+            if (d.date === day) {
+              return {
+                ...d,
+                timeEntries: d.timeEntries.filter(entry => entry.id !== entryId)
+              }
+            }
+            return d
+          })
+    
+          return { ...prev, days: updatedDays }
+        })
+      }
+    
+    useEffect(() => {
+        const loadTimesheet = async () => {
+            try {
+                const { data, error } = await fetchTimesheetsbyID()
 
-    if (!timesheet) {
-        notFound();
+                const currentTimesheet = data.find((ts: any) => {
+                    return ts.week === Number(params.id);
+                }); console.log(currentTimesheet)
+                if (currentTimesheet) {
+                    setTimesheet(currentTimesheet)
+                } else {
+                    setError('Timesheet not found')
+                }
+            } catch (err) {
+                setError('Failed to load timesheet')
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        loadTimesheet()
+    }, [params.id])
+
+    if (isLoading) {
+        return <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow md:p-6 p-4 flex items-center justify-center">
+            <Loader className="size-4 animate-spin" />
+        </div>
     }
+    if (error) {
+        return <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow md:p-6 p-4 flex items-center justify-center">
+            <p className="text-red-500">{error}</p>
+        </div>
+    }
+
     return (
         <div className="max-w-5xl mx-auto mt-8 bg-white rounded-lg shadow md:p-6 p-4">
             <div className="flex md:flex-row flex-col justify-between items-center mb-6">
@@ -34,12 +80,12 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
             <div className="">
                 <div className="mb-6">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-sm font-light">{timesheet.date}</h3>
+                        <h3 className="text-sm font-light">{timesheet?.date}</h3>
                     </div>
                 </div>
 
                 <div className="space-y-6 ">
-                    {timesheet.days.map((day: any) => (
+                    {timesheet?.days.map((day: any) => (
                         <div key={day.date} className=" rounded-lg p-4 flex  md:flex-row flex-col justify-between items-start h-full gap-2 md:gap-7  ">
                             <div className="font-medium text-gray-900 md:mb-3 flex items-start justify-start  h-full md:w-[10%]">
                                 {new Date(day.date).toLocaleDateString('en-US', {
@@ -62,7 +108,7 @@ export default async function WeekDetails({ params }: WeekDetailsProps) {
                                                         {entry.project}
                                                     </div>
                                                     <div>
-                                                        <EditOrDelete />
+                                                        <EditOrDelete onDelete={() => handleDeleteEntry(day.date, entry.id)} />
                                                     </div>
                                                 </div>
                                             </div>
