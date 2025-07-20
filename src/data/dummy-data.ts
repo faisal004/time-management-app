@@ -19,45 +19,13 @@ const generateTimeEntries = (count: number): TimeEntry[] => {
     project: projects[Math.floor(Math.random() * projects.length)],
     workType: workTypes[Math.floor(Math.random() * workTypes.length)],
     taskDescription: tasks[Math.floor(Math.random() * tasks.length)],
-    hours: Math.floor(Math.random() * 4) + 1 
+    hours: Math.floor(Math.random() * 4) + 1
   }));
-};
-
-const generateDays = (weekNumber: number, targetHours: number): DayTimesheet[] => {
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-  const baseDate = new Date(2024, 0, weekNumber * 7);
-  
-  const hoursPerDay = Math.floor(targetHours / 5);
-  const remainder = targetHours % 5;
-  
-  return days.map((day, index) => {
-    const date = new Date(baseDate);
-    date.setDate(baseDate.getDate() + index);
-    
-    const dayHours = index < remainder ? hoursPerDay + 1 : hoursPerDay;
-    const timeEntries = dayHours > 0 ? generateTimeEntries(Math.min(3, Math.max(1, Math.ceil(dayHours / 2)))) : [];
-    
-    if (index === days.length - 1) {
-      const currentTotal = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
-      if (timeEntries.length > 0 && currentTotal !== dayHours) {
-        timeEntries[timeEntries.length - 1].hours += dayHours - currentTotal;
-      }
-    }
-    
-    const totalHours = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
-    
-    return {
-      date: date.toISOString().split('T')[0],
-      dayOfWeek: day,
-      timeEntries,
-      totalHours
-    };
-  });
 };
 
 const getWeekStatusAndAction = (days: DayTimesheet[]) => {
   const totalHours = days.reduce((sum, day) => sum + day.totalHours, 0);
-  
+
   if (totalHours === 0) {
     return { status: 'MISSING' as TimesheetStatus, action: 'Create' as const };
   } else if (totalHours >= 40) {
@@ -67,27 +35,98 @@ const getWeekStatusAndAction = (days: DayTimesheet[]) => {
   }
 };
 
-const generateWeek = (weekNumber: number, targetHours: number) => {
-  const days = generateDays(weekNumber, targetHours);
+const getStartOfWeek = (date: Date): Date => {
+  const startOfWeek = new Date(date);
+  const day = startOfWeek.getDay();
+  const daysToMonday = day === 0 ? -6 : 1 - day;
+  startOfWeek.setDate(date.getDate() + daysToMonday);
+  return startOfWeek;
+};
+
+const getWeeksInMonth = (month: number, year: number): Date[] => {
+  const weeks: Date[] = [];
+  const firstDay = new Date(year, month - 1, 1);
+  const lastDay = new Date(year, month, 0);
+
+  let currentWeekStart = getStartOfWeek(firstDay);
+
+  while (currentWeekStart <= lastDay) {
+    weeks.push(new Date(currentWeekStart));
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+  }
+
+  return weeks;
+};
+
+const generateDays = (weekStartDate: Date, month: number, targetHours: number): DayTimesheet[] => {
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+  return days.map((dayName, index) => {
+    const date = new Date(weekStartDate);
+    date.setDate(weekStartDate.getDate() + index + 1);
+
+    let dayHours = 0;
+    let timeEntries: TimeEntry[] = [];
+
+    const isInTargetMonth = date.getMonth() === month - 1;
+
+    if (isInTargetMonth) {
+      const hoursPerWeekday = Math.floor(targetHours / 5);
+      const remainder = targetHours % 5;
+
+      dayHours = index < remainder ? hoursPerWeekday + 1 : hoursPerWeekday;
+
+      if (dayHours > 0) {
+        timeEntries = generateTimeEntries(Math.min(3, Math.max(1, Math.ceil(dayHours / 2))));
+
+        if (timeEntries.length > 0) {
+          const currentTotal = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
+          if (currentTotal !== dayHours) {
+            timeEntries[timeEntries.length - 1].hours += dayHours - currentTotal;
+          }
+        }
+      }
+    }
+
+    const totalHours = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
+
+    return {
+      date: date.toISOString().split('T')[0],
+      dayOfWeek: dayName,
+      timeEntries,
+      totalHours
+    };
+  });
+};
+
+const generateWeek = (weekStartDate: Date, weekIndex: number, month: number, targetHours: number): Timesheet => {
+  const days = generateDays(weekStartDate, month, targetHours);
   const { status, action } = getWeekStatusAndAction(days);
-  const startDate = new Date(2024, 0, (weekNumber - 1) * 7 + 1);
-  const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + 4);
-  
+
+  const endDate = new Date(weekStartDate);
+  endDate.setDate(weekStartDate.getDate() + 4);
+
   const formatDate = (date: Date) => {
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });
     const year = date.getFullYear();
     return { day, month, year };
   };
-  
-  const start = formatDate(startDate);
+
+  const start = formatDate(weekStartDate);
   const end = formatDate(endDate);
-  
-  const formattedDate = `${start.day} - ${end.day} ${end.month}, ${end.year}`;
-  
+
+  let formattedDate: string;
+  if (start.month === end.month && start.year === end.year) {
+    formattedDate = `${start.day} - ${end.day} ${end.month}, ${end.year}`;
+  } else if (start.year === end.year) {
+    formattedDate = `${start.day} ${start.month} - ${end.day} ${end.month}, ${end.year}`;
+  } else {
+    formattedDate = `${start.day} ${start.month} ${start.year} - ${end.day} ${end.month} ${end.year}`;
+  }
+
   return {
-    week: weekNumber,
+    week: weekIndex + 1,
     date: formattedDate,
     status,
     action,
@@ -95,14 +134,21 @@ const generateWeek = (weekNumber: number, targetHours: number) => {
   };
 };
 
-export const timesheets: Timesheet[] = [
-  generateWeek(1, 40),
-  
-  generateWeek(2, 40),
-  
-  generateWeek(3, 20),
-  
-  generateWeek(4, 0),
-  
-  generateWeek(5, 38)
-];
+const generateMonthlyTimesheets = (month: number, year: number): Timesheet[] => {
+  const weeks = getWeeksInMonth(month, year);
+
+  const hourPatterns = [
+    40,
+    32,
+    0,
+
+  ];
+
+  return weeks.map((weekStart, index) => {
+    const hours = hourPatterns[index % hourPatterns.length];
+    return generateWeek(weekStart, index, month, hours);
+  });
+};
+
+export const timesheets: Timesheet[] = generateMonthlyTimesheets(1, 2024);
+
