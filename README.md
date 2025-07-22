@@ -8,7 +8,6 @@ A modern time tracking and timesheet management application built with Next.js, 
 - Track time entries with project and task details
 - Responsive design for desktop and mobile
 - Progress tracking for weekly hours
-- Add, edit, and delete time entries
 - Authentication and protected routes
 
 ## Prerequisites
